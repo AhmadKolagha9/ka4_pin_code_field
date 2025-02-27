@@ -1,5 +1,5 @@
 name: ka4_pin_code_field
-description: "A new Flutter package project."
+description: "A customizable Flutter widget for verification code or PIN input fields."
 version: 0.0.1
 homepage:  https://github.com/AhmadKolagha9/ka4_pin_code_field
 repository: https://github.com/AhmadKolagha9/ka4_pin_code_field.git
