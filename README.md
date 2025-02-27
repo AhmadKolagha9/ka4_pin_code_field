@@ -20,4 +20,4 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  ka4_pin_code_field: ^0.1.0
+  ka4_pin_code_field: ^0.0.1
