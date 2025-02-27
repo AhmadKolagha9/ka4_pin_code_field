@@ -57,8 +57,12 @@ class _Ka4PinCodeFieldState extends State<Ka4PinCodeField> {
   }
 
   void _onTextChanged(int index, String value) {
-    if (value.isNotEmpty && index < widget.length - 1) {
-      _focusNodes[index + 1].requestFocus();
+    if (value.isNotEmpty) {
+      if (index < widget.length - 1) {
+        _focusNodes[index + 1].requestFocus();
+      } else {
+        _focusNodes[index].unfocus(); // Keep focus on last field
+      }
     } else if (value.isEmpty && index > 0) {
       _focusNodes[index - 1].requestFocus();
     }
@@ -71,17 +75,14 @@ class _Ka4PinCodeFieldState extends State<Ka4PinCodeField> {
     }
   }
 
-  // Handle pasting code
   void _handlePaste(String pastedText) {
     if (pastedText.length == widget.length) {
       for (int i = 0; i < widget.length; i++) {
         _controllers[i].text = pastedText[i];
         _code[i] = pastedText[i];
-        if (i == widget.length - 1) {
-          _focusNodes[i].requestFocus();
-        }
       }
       widget.onCompleted?.call(pastedText);
+      setState(() {}); // Force UI update
     }
   }
 
@@ -109,7 +110,10 @@ class _Ka4PinCodeFieldState extends State<Ka4PinCodeField> {
         maxLength: 1,
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
-          _Ka4PinCodeInputFormatter(onPaste: _handlePaste),
+          _Ka4PinCodeInputFormatter(
+            onPaste: _handlePaste,
+            length: widget.length,
+          ),
         ],
         decoration: InputDecoration(
           counterText: '',
@@ -127,20 +131,25 @@ class _Ka4PinCodeFieldState extends State<Ka4PinCodeField> {
   }
 }
 
-// Custom TextInputFormatter to handle paste
 class _Ka4PinCodeInputFormatter extends TextInputFormatter {
   final Function(String) onPaste;
+  final int length;
 
-  _Ka4PinCodeInputFormatter({required this.onPaste});
+  _Ka4PinCodeInputFormatter({
+    required this.onPaste,
+    required this.length,
+  });
 
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue,
       TextEditingValue newValue,
       ) {
-    if (newValue.text.length > 1) {
+    if (newValue.text.length == length) {
       onPaste(newValue.text);
-      return TextEditingValue.empty; // Prevent entering multiple characters
+      return oldValue; // Prevent clearing the current field
+    } else if (newValue.text.length > 1) {
+      return oldValue; // Block invalid input
     }
     return newValue;
   }
