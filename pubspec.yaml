@@ -3,6 +3,7 @@ description: "A new Flutter package project."
 version: 0.0.1
 homepage:  https://github.com/AhmadKolagha9/ka4_pin_code_field
 repository: https://github.com/AhmadKolagha9/ka4_pin_code_field.git
+license: MIT
 
 environment:
   sdk: ^3.6.2
