@@ -47,12 +47,8 @@ class _Ka4PinCodeFieldState extends State<Ka4PinCodeField> {
 
   @override
   void dispose() {
-    for (var c in _controllers) {
-      c.dispose();
-    }
-    for (var f in _focusNodes) {
-      f.dispose();
-    }
+    for (var c in _controllers) c.dispose();
+    for (var f in _focusNodes) f.dispose();
     super.dispose();
   }
 
@@ -60,8 +56,6 @@ class _Ka4PinCodeFieldState extends State<Ka4PinCodeField> {
     if (value.isNotEmpty) {
       if (index < widget.length - 1) {
         _focusNodes[index + 1].requestFocus();
-      } else {
-        _focusNodes[index].unfocus(); // Keep focus on last field
       }
     } else if (value.isEmpty && index > 0) {
       _focusNodes[index - 1].requestFocus();
@@ -82,7 +76,8 @@ class _Ka4PinCodeFieldState extends State<Ka4PinCodeField> {
         _code[i] = pastedText[i];
       }
       widget.onCompleted?.call(pastedText);
-      setState(() {}); // Force UI update
+      setState(() {});
+      _focusNodes[widget.length - 1].requestFocus();
     }
   }
 
@@ -147,7 +142,10 @@ class _Ka4PinCodeInputFormatter extends TextInputFormatter {
       ) {
     if (newValue.text.length == length) {
       onPaste(newValue.text);
-      return oldValue; // Prevent clearing the current field
+      return TextEditingValue(
+        text: newValue.text.isNotEmpty ? newValue.text[0] : '',
+        selection: TextSelection.collapsed(offset: 1),
+      );
     } else if (newValue.text.length > 1) {
       return oldValue; // Block invalid input
     }
